@@ -36,7 +36,7 @@ public class Server {
 
                         try (InputStream localFileStream = new FileInputStream(aRequest.getLocalPath());
                              OutputStream serverFileStream = new FileOutputStream(serverFile)) {
-                            byte[] buffer = new byte[64 * 1024]; // 64KB buffer for efficient file transfer
+                            byte[] buffer = new byte[64 * 1024]; // 64KB buffer
                             int bytesRead;
 
                             while ((bytesRead = localFileStream.read(buffer)) != -1) {
@@ -85,7 +85,7 @@ public class Server {
                                 serverFileStream.write(buffer, 0, bytesRead);
                             }
                         }
-                        // Server response to a successful append should include the new file size
+                        // Server response to a successful append including the new file size
                         aResponse = new Response("append", "File appended successfully", String.valueOf(serverFile.length()));
                         out.writeObject(aResponse);
                         break;
