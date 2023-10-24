@@ -40,6 +40,13 @@ public class Server {
                             while ((bytesRead = localFileStream.read(buffer)) != -1) {
                                 serverFileStream.write(buffer, 0, bytesRead);
                             }
+
+                            // Close the serverFileStream to ensure the file is saved properly
+                            serverFileStream.close();
+
+                            aResponse.setMessage("File added successfully");
+                        } catch (IOException e) {
+                            aResponse.setError("Error while adding the file: " + e.getMessage());
                         }
                         break;
 
@@ -48,7 +55,7 @@ public class Server {
 
                         if (!serverFile.exists()) {
                             // Server should return an error if the file does not exist
-                            aResponse = new Response("fetch", "File not found", "");
+                            aResponse.setError("File not found");
                             out.writeObject(aResponse);
                             return;
                         }
@@ -69,7 +76,7 @@ public class Server {
 
                         if (!serverFile.exists()) {
                             // Server should return an error if the file does not exist
-                            aResponse = new Response("append", "File not found", "");
+                            aResponse.setError("File not found");
                             out.writeObject(aResponse);
                             return;
                         }
@@ -84,8 +91,7 @@ public class Server {
                             }
                         }
                         // Server response to a successful append including the new file size
-                        aResponse = new Response("append", "File appended successfully", String.valueOf(serverFile.length()));
-                        out.writeObject(aResponse);
+                        aResponse.setMessage("File appended successfully");
                         break;
 
                     case "exit":

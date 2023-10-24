@@ -21,17 +21,11 @@ public class Response implements Serializable {
             this.message = message;
         }
 
-        public String getValue() {
-            return value;
-        }
+        public String getValue() {return value;}
 
-        public void setError(String error) {
-            this.error = error;
-        }
+        public void setError(String error) {this.error = error;}
 
-        public void setValue(String value) {
-            this.value = value;
-        }
+        public void setValue(String value) {this.value = value;}
 
         public String getError() {return error;}
     }
