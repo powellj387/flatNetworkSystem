@@ -6,12 +6,12 @@ import java.io.Serializable;
 public class Request implements Serializable {
     private String method;
     private String fileName;
-    private String localPath;
+    private byte[] fileData;
 
-    public Request(String method, String fileName, String localPath) {
+    public Request(String method, String fileName, byte[] fileData) {
         this.method = method;
         this.fileName = fileName;
-        this.localPath = localPath;
+        this.fileData = fileData;
     }
 
     public String getMethod() {
@@ -22,7 +22,7 @@ public class Request implements Serializable {
         return fileName;
     }
 
-    public String getLocalPath() {
-        return localPath;
+    public byte[] getFileData() {
+        return fileData;
     }
 }

@@ -5,9 +5,9 @@ import java.io.Serializable;
 public class Response implements Serializable {
     private String message;
     private String error;
-    private String value;
+    private byte[] value;
 
-        public Response(String message, String error, String value) {
+        public Response(String message, String error, byte[] value) {
         this.message = message;
         this.error = error;
         this.value = value;
@@ -21,11 +21,11 @@ public class Response implements Serializable {
             this.message = message;
         }
 
-        public String getValue() {return value;}
+        public byte[] getValue() {return value;}
 
         public void setError(String error) {this.error = error;}
 
-        public void setValue(String value) {this.value = value;}
+        public void setValue(byte[] value) {this.value = value;}
 
         public String getError() {return error;}
     }

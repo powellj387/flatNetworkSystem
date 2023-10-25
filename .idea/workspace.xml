@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e93c0418-69a2-4bca-beb1-0a2a7f1eb9b9" name="Changes" comment="Maybe got the server done?">
-      <change afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Request.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Request.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Response.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" afterDir="false" />
     </list>
@@ -34,13 +35,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/julia/IdeaProjects/powellj_p1/src/KeyValueServer/mainServer.java&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/julia/IdeaProjects/powellj_p1/src/KeyValueServer/mainServer.java"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="flatNetworkFileSystem.Client" />
@@ -97,5 +99,12 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Maybe got the server done?" />
     <option name="LAST_COMMIT_MESSAGE" value="Maybe got the server done?" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="aRequest.getLocalPath()" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

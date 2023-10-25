@@ -1,10 +1,8 @@
 package flatNetworkFileSystem;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -29,8 +27,11 @@ public class Client {
             }
         }
 
-        public void add(String fileName, String localPath) {
-            Request request = new Request("add",fileName,localPath);
+        public void add(String fileName, String localPath) throws IOException {
+            File file = new File(localPath+fileName);
+            byte[] fileData = Files.readAllBytes(file.toPath());
+
+            Request request = new Request("add",fileName,fileData);
             Response response =  sendRequest(request);
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
@@ -39,9 +40,16 @@ public class Client {
             }
         }
 
-        public void fetch(String fileName, String localPath) {
-            Request request = new Request("fetch", fileName, localPath);
+        public void fetch(String fileName, String localPath) throws IOException {
+
+            File file = new File(localPath+fileName);
+            byte[] fileData = Files.readAllBytes(file.toPath());
+
+            Request request = new Request("fetch", fileName, fileData);
             Response response = sendRequest(request);
+
+            // Downloads the file
+
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
             } else {
@@ -49,8 +57,12 @@ public class Client {
             }
         }
 
-        public void append(String fileName, String localPath) {
-            Request request = new Request("append", fileName, localPath);
+        public void append(String fileName, String localPath) throws IOException {
+
+            File accessedFile = new File(localPath+fileName);
+            byte[] byteBuffer = Files.readAllBytes(accessedFile.toPath());
+
+            Request request = new Request("append", fileName, byteBuffer);
             Response response = sendRequest(request);
 
             if (!Objects.equals(response.getMessage(), "")) {
@@ -66,7 +78,7 @@ public class Client {
             Scanner scan = new Scanner(System.in);
             PrintStream out = new PrintStream(System.out);
 
-            client.add("bunny", "C:\\Users\\julia\\Pictures");
-/*          client.fetch("bunny", "C:\\Users\\julia\\p2Images");*/
+            client.add("bunny.jpg", "C:\\Users\\jacks\\Downloads\\");
+            client.fetch("bunny.jpg", "\\Users\\jacks\\Downloads\\");
         }
     }
