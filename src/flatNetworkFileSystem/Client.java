@@ -27,11 +27,11 @@ public class Client {
             }
         }
 
-        public void add(String fileName, String localPath) throws IOException {
-            File file = new File(localPath+fileName);
+        public void add(String serverFileName, String localFilePath) throws IOException {
+            File file = new File(localFilePath);
             byte[] fileData = Files.readAllBytes(file.toPath());
 
-            Request request = new Request("add",fileName,fileData);
+            Request request = new Request("add",serverFileName,fileData);
             Response response =  sendRequest(request);
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
@@ -40,15 +40,18 @@ public class Client {
             }
         }
 
-        public void fetch(String fileName, String localPath) throws IOException {
+        public void fetch(String serverFileName, String localFilePath) throws IOException {
 
-            File file = new File(localPath+fileName);
+            File file = new File(localFilePath);
             byte[] fileData = Files.readAllBytes(file.toPath());
 
-            Request request = new Request("fetch", fileName, fileData);
+            Request request = new Request("fetch", serverFileName, fileData);
             Response response = sendRequest(request);
 
             // Downloads the file
+            try(OutputStream fos = new FileOutputStream(localFilePath)){
+                fos.write(response.getValue());
+            }
 
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
@@ -57,12 +60,12 @@ public class Client {
             }
         }
 
-        public void append(String fileName, String localPath) throws IOException {
+        public void append(String serverFileName, String localFilePath) throws IOException {
 
-            File accessedFile = new File(localPath+fileName);
+            File accessedFile = new File(localFilePath);
             byte[] byteBuffer = Files.readAllBytes(accessedFile.toPath());
 
-            Request request = new Request("append", fileName, byteBuffer);
+            Request request = new Request("append", serverFileName, byteBuffer);
             Response response = sendRequest(request);
 
             if (!Objects.equals(response.getMessage(), "")) {
@@ -78,7 +81,9 @@ public class Client {
             Scanner scan = new Scanner(System.in);
             PrintStream out = new PrintStream(System.out);
 
-            client.add("bunny.jpg", "C:\\Users\\jacks\\Downloads\\");
-            client.fetch("bunny.jpg", "\\Users\\jacks\\Downloads\\");
+            client.add("bunny", "C:\\Users\\jacks\\Downloads\\bunny.jpg");
+            client.fetch("bunny", "\\Users\\jacks\\Downloads\\bunny.jpg");
+            client.add("bunny-2", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
+            client.append("bunny", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
         }
     }

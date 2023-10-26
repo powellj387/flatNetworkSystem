@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class Server {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        final String STORAGE_PATH = "server_storage/"; // Directory to store files
+        //final String STORAGE_PATH = "server_storage/"; // Directory to store files
 
         // Create the server socket to accept connections
         ServerSocket serverSocket = new ServerSocket(50702);
@@ -29,43 +29,21 @@ public class Server {
                 Response aResponse = new Response("","",new byte[0]);
                 switch (aRequest.getMethod()) {
                     case "add":
-                        //File serverFile = new File(STORAGE_PATH + aRequest.getFileName());
-
                         if (fileServer.containsKey(aRequest.getFileName())) {
                             fileServer.remove(aRequest.getFileName()); // If a file with the same name exists, overwrite it.
                             aResponse.setMessage("File " + aRequest.getFileName() + " was overwritten\nFile added successfully");
                         }
                         else{
-                            aResponse.setError("File added successfully");
+                            aResponse.setMessage("File added successfully");
                         }
 
 
                         byte[] fileData = aRequest.getFileData();
-                        fileServer.put(aRequest.getFileName(), aRequest.getFileData());
+                        fileServer.put(aRequest.getFileName(), fileData);
 
-
-                        /*
-                        try (byte[] fileData = new byte[aRequest.getFileData().length]){
-                             //OutputStream serverFileStream = new FileOutputStream(serverFile)) {
-                            byte[] buffer = new byte[64 * 1024]; // 64KB buffer
-                            int bytesRead;
-
-                            while ((bytesRead = localFileStream.read(buffer)) != -1) {
-                                serverFileStream.write(buffer, 0, bytesRead);
-                            }
-
-                            // Close the serverFileStream to ensure the file is saved properly
-                            serverFileStream.close();
-
-                            aResponse.setMessage("File added successfully");
-                        } catch (IOException e) {
-                            aResponse.setError("Error while adding the file: " + e.getMessage());
-                        }
-                        */
                         break;
 
                     case "fetch":
-
                         if (fileServer.containsKey(aRequest.getFileName())){
                             fileData = fileServer.get(aRequest.getFileName());
                             aResponse.setValue(fileData);
@@ -73,30 +51,24 @@ public class Server {
                         } else{
                            aResponse.setError("Error: File does not exist");
                         }
-                        /*
-                       serverFile = new File(STORAGE_PATH + aRequest.getFileName());
-
-                        if (!serverFile.exists()) {
-                            // Server should return an error if the file does not exist
-                            aResponse.setError("File not found");
-                            out.writeObject(aResponse);
-                            return;
-                        }
-
-                        try (InputStream serverFileStream = new FileInputStream(serverFile);
-                             OutputStream localFileStream = new FileOutputStream(aRequest.getFileData())) {
-                            byte[] buffer = new byte[64 * 1024]; // 64KB buffer for efficient file transfer
-                            int bytesRead;
-
-                            while ((bytesRead = serverFileStream.read(buffer)) != -1) {
-                                localFileStream.write(buffer, 0, bytesRead);
-                            }
-                        }
-                        */
                         break;
 
                     case "append":
-                        //serverFile = new File(STORAGE_PATH + aRequest.getFileName());
+                        if(fileServer.containsKey(aRequest.getFileName())){
+                            byte[] originalFileData = fileServer.get(aRequest.getFileName());
+                            byte[] fileDataToAppend = aRequest.getFileData();
+                            byte[] newFileData = new byte[originalFileData.length + fileDataToAppend.length];
+
+                            System.arraycopy(originalFileData, 0, newFileData, 0, originalFileData.length);
+                            System.arraycopy(fileDataToAppend, 0, newFileData, fileDataToAppend.length, newFileData.length);
+                            aResponse.setValue(newFileData);
+
+                            aResponse.setMessage("Data appended successfully. Size: " + newFileData.length);
+                        } else{
+                            aResponse.setError("Error: File does not exist");
+                        }
+
+                        /*//serverFile = new File(STORAGE_PATH + aRequest.getFileName());
                         String fileName = aRequest.getFileName();
 
                         if (!fileServer.containsKey(fileName)) {
@@ -118,7 +90,7 @@ public class Server {
                             fileServer.put(fileName, newData);
                         //}
                         // Server response to a successful append including the new file size
-                        aResponse.setMessage("File appended successfully");
+                        aResponse.setMessage("File appended successfully");*/
                         break;
 
                     case "exit":
