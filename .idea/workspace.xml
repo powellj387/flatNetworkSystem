@@ -102,7 +102,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698260658523</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Created basics for the methods">
+      <option name="closed" value="true" />
+      <created>1698345435779</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1698345435779</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -114,9 +122,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
-          <line>65</line>
-          <option name="timeStamp" value="11" />
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java</url>
+          <line>72</line>
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

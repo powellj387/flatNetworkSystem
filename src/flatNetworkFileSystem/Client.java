@@ -68,6 +68,10 @@ public class Client {
             Request request = new Request("append", serverFileName, byteBuffer);
             Response response = sendRequest(request);
 
+            FileOutputStream targetOutputStream = new FileOutputStream(localFilePath);
+            targetOutputStream.write(response.getValue());
+            targetOutputStream.close();
+
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
             } else {
@@ -85,5 +89,6 @@ public class Client {
             client.fetch("bunny", "\\Users\\jacks\\Downloads\\bunny.jpg");
             client.add("bunny-2", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
             client.append("bunny", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
+            client.fetch("bunny-2", "\\Users\\jacks\\Downloads\\bunny-2.jpg");
         }
     }

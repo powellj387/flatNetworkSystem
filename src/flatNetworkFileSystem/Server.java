@@ -54,13 +54,14 @@ public class Server {
                         break;
 
                     case "append":
+
                         if(fileServer.containsKey(aRequest.getFileName())){
                             byte[] originalFileData = fileServer.get(aRequest.getFileName());
                             byte[] fileDataToAppend = aRequest.getFileData();
                             byte[] newFileData = new byte[originalFileData.length + fileDataToAppend.length];
 
                             System.arraycopy(originalFileData, 0, newFileData, 0, originalFileData.length);
-                            System.arraycopy(fileDataToAppend, 0, newFileData, fileDataToAppend.length, newFileData.length);
+                            System.arraycopy(fileDataToAppend, 0, newFileData, fileDataToAppend.length, fileDataToAppend.length);
                             aResponse.setValue(newFileData);
 
                             aResponse.setMessage("Data appended successfully. Size: " + newFileData.length);
