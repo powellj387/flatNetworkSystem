@@ -29,9 +29,9 @@ public class Client {
 
         public void add(String serverFileName, String localFilePath) throws IOException {
             File file = new File(localFilePath);
-            byte[] fileData = Files.readAllBytes(file.toPath());
+            //File fileData = Files.readAllBytes(file.toPath());
 
-            Request request = new Request("add",serverFileName,fileData);
+            Request request = new Request("add",serverFileName,file);
             Response response =  sendRequest(request);
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
@@ -43,15 +43,13 @@ public class Client {
         public void fetch(String serverFileName, String localFilePath) throws IOException {
 
             File file = new File(localFilePath);
-            byte[] fileData = Files.readAllBytes(file.toPath());
+            //File fileData = Files.readAllBytes(file.toPath());
 
-            Request request = new Request("fetch", serverFileName, fileData);
+            Request request = new Request("fetch", serverFileName, file);
             Response response = sendRequest(request);
 
             // Downloads the file
-            try(OutputStream fos = new FileOutputStream(localFilePath)){
-                fos.write(response.getValue());
-            }
+            try(OutputStream fos = new FileOutputStream(response.getValue())){ }
 
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
@@ -61,22 +59,39 @@ public class Client {
         }
 
         public void append(String serverFileName, String localFilePath) throws IOException {
+            File file = new File(localFilePath);
+            //File fileData = Files.readAllBytes(file.toPath());
 
-            File accessedFile = new File(localFilePath);
-            byte[] byteBuffer = Files.readAllBytes(accessedFile.toPath());
+            Request request = new Request("append",serverFileName,file);
 
-            Request request = new Request("append", serverFileName, byteBuffer);
-            Response response = sendRequest(request);
-
-            FileOutputStream targetOutputStream = new FileOutputStream(localFilePath);
-            targetOutputStream.write(response.getValue());
-            targetOutputStream.close();
-
+            Response response =  sendRequest(request);
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
             } else {
                 System.out.println("Error: " + response.getError());
             }
+            /*File accessedFile = new File(localFilePath);
+            //File byteBuffer = Files.readAllBytes(accessedFile.toPath());
+
+            Request request = new Request("append", serverFileName, accessedFile);
+            Response response = sendRequest(request);
+
+            try(FileOutputStream targetOutputStream = new FileOutputStream(response.getValue())) {
+                long fileSize = response.getValue().length();
+                byte[] buffer = new byte[64 * 1024];
+                int bytesRead;
+                while (fileSize > 0 && (bytesRead = in.read(buffer)) != -1) {
+                    targetOutputStream.write(buffer, 0, bytesRead);
+                    fileSize -= bytesRead;
+                }
+                targetOutputStream.close();
+            }
+
+            if (!Objects.equals(response.getMessage(), "")) {
+                System.out.println("Response: " + response.getMessage());
+            } else {
+                System.out.println("Error: " + response.getError());
+            }*/
         }
 
         public static void main(String[] args) throws IOException {
@@ -88,7 +103,7 @@ public class Client {
             client.add("bunny", "C:\\Users\\jacks\\Downloads\\bunny.jpg");
             client.fetch("bunny", "\\Users\\jacks\\Downloads\\bunny.jpg");
             client.add("bunny-2", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
-            client.append("bunny", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
+            //client.append("bunny", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
             client.fetch("bunny-2", "\\Users\\jacks\\Downloads\\bunny-2.jpg");
         }
     }

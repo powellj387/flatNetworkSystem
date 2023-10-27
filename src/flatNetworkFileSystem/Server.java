@@ -13,7 +13,7 @@ public class Server {
         // Create the server socket to accept connections
         ServerSocket serverSocket = new ServerSocket(50702);
 
-        HashMap<String, byte[]> fileServer = new HashMap<>();
+        HashMap<String, File> fileServer = new HashMap<>();
 
         while (true) {
         System.out.println("Allowing connections");
@@ -26,9 +26,10 @@ public class Server {
             while (true) {
                 Object request = in.readObject();
                 Request aRequest = (Request) request;
-                Response aResponse = new Response("","",new byte[0]);
+                Response aResponse = new Response("","",new File(""));
                 switch (aRequest.getMethod()) {
                     case "add":
+
                         if (fileServer.containsKey(aRequest.getFileName())) {
                             fileServer.remove(aRequest.getFileName()); // If a file with the same name exists, overwrite it.
                             aResponse.setMessage("File " + aRequest.getFileName() + " was overwritten\nFile added successfully");
@@ -38,7 +39,7 @@ public class Server {
                         }
 
 
-                        byte[] fileData = aRequest.getFileData();
+                        File fileData = aRequest.getFileData();
                         fileServer.put(aRequest.getFileName(), fileData);
 
                         break;
@@ -54,44 +55,23 @@ public class Server {
                         break;
 
                     case "append":
+                        if (fileServer.containsKey(aRequest.getFileName())){
+                            File originalFile = fileServer.get(aRequest.getFileName());
+                            File fileToAppend = aRequest.getFileData();
 
-                        if(fileServer.containsKey(aRequest.getFileName())){
-                            byte[] originalFileData = fileServer.get(aRequest.getFileName());
-                            byte[] fileDataToAppend = aRequest.getFileData();
-                            byte[] newFileData = new byte[originalFileData.length + fileDataToAppend.length];
-
-                            System.arraycopy(originalFileData, 0, newFileData, 0, originalFileData.length);
-                            System.arraycopy(fileDataToAppend, 0, newFileData, fileDataToAppend.length, fileDataToAppend.length);
-                            aResponse.setValue(newFileData);
-
-                            aResponse.setMessage("Data appended successfully. Size: " + newFileData.length);
+                            if(originalFile != null && originalFile.exists()){
+                                try (OutputStream fileOutput = new FileOutputStream(originalFile, true);
+                                InputStream fileInput = new FileInputStream(fileToAppend)){
+                                    byte[] buffer = new byte[64*1024];
+                                    int bytesRead;
+                                    while ((bytesRead = fileInput.read(buffer)) != -1){
+                                        fileOutput.write(buffer, 0, bytesRead);
+                                    }
+                                }
+                            }
                         } else{
-                            aResponse.setError("Error: File does not exist");
+                            aResponse.setError("File does not exist");
                         }
-
-                        /*//serverFile = new File(STORAGE_PATH + aRequest.getFileName());
-                        String fileName = aRequest.getFileName();
-
-                        if (!fileServer.containsKey(fileName)) {
-                            // Server should return an error if the file does not exist
-                            aResponse.setError("File not found");
-                            out.writeObject(aResponse);
-                            return;
-                        }
-
-                        //try (){
-
-                            byte[] temp = new byte[64];
-                            byte[] originalFile = fileServer.get(fileName);
-                            byte[] newData = new byte[originalFile.length + temp.length];
-
-                            System.arraycopy(originalFile, 0, newData, 0, newData.length);
-                            System.arraycopy(temp, 0, newData, originalFile.length, temp.length);
-
-                            fileServer.put(fileName, newData);
-                        //}
-                        // Server response to a successful append including the new file size
-                        aResponse.setMessage("File appended successfully");*/
                         break;
 
                     case "exit":

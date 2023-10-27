@@ -1,13 +1,14 @@
 package flatNetworkFileSystem;
 
+import java.io.File;
 import java.io.Serializable;
 
 public class Response implements Serializable {
     private String message;
     private String error;
-    private byte[] value;
+    private File value;
 
-        public Response(String message, String error, byte[] value) {
+        public Response(String message, String error, File value) {
         this.message = message;
         this.error = error;
         this.value = value;
@@ -21,11 +22,11 @@ public class Response implements Serializable {
             this.message = message;
         }
 
-        public byte[] getValue() {return value;}
+        public File getValue() {return value;}
 
         public void setError(String error) {this.error = error;}
 
-        public void setValue(byte[] value) {this.value = value;}
+        public void setValue(File value) {this.value = value;}
 
         public String getError() {return error;}
     }

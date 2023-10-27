@@ -7,6 +7,8 @@
     <list default="true" id="e93c0418-69a2-4bca-beb1-0a2a7f1eb9b9" name="Changes" comment="Created basics for the methods">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Request.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Request.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Response.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -110,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698345435779</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Created basics for the methods">
+      <option name="closed" value="true" />
+      <created>1698350701836</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1698350701836</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -123,10 +133,34 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java</url>
-          <line>72</line>
+          <line>86</line>
           <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
+          <line>68</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
+          <line>66</line>
+          <option name="timeStamp" value="25" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="java.io.FileInputStream" memberName="path" />
+      </pinned-members>
+    </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="fileInput.read(buffer)" language="JAVA" />
+        <watch expression="fileToAppend.exists()" language="JAVA" />
+        <watch expression="originalFile.exists()" language="JAVA" />
+        <watch expression="fileServer.get(&quot;bunny&quot;)" language="JAVA" />
+        <watch expression="fileServer.get(&quot;bunny&quot;).length()" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
