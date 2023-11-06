@@ -4,16 +4,16 @@ package flatNetworkFileSystem;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 public class Server {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        //final String STORAGE_PATH = "server_storage/"; // Directory to store files
+        final String STORAGE_PATH = "server_storage/"; // Directory to store files
 
         // Create the server socket to accept connections
         ServerSocket serverSocket = new ServerSocket(50702);
-
-        HashMap<String, File> fileServer = new HashMap<>();
 
         while (true) {
         System.out.println("Allowing connections");
@@ -29,28 +29,54 @@ public class Server {
                 Response aResponse = new Response("","",new File(""));
                 switch (aRequest.getMethod()) {
                     case "add":
+                        boolean isPresent = false;
+                        //create a path for the file on the local computer
+                        Path fileToAdd = Path.of(STORAGE_PATH+aRequest.getFileName());
+                        //Delete the old one with the same name if it exists
+                        isPresent = Files.deleteIfExists(fileToAdd);
 
-                        if (fileServer.containsKey(aRequest.getFileName())) {
-                            fileServer.remove(aRequest.getFileName()); // If a file with the same name exists, overwrite it.
-                            aResponse.setMessage("File " + aRequest.getFileName() + " was overwritten\nFile added successfully");
+                        //Make sure there is somewhere to put the file
+                        Files.createDirectories(fileToAdd.getParent()); // Ensure parent directories exist
+
+                        try (InputStream fileInputStream = new FileInputStream(aRequest.getFileData());
+                             FileOutputStream fileOutputStream = new FileOutputStream(STORAGE_PATH + aRequest.getFileName())) {
+
+                            byte[] buffer = new byte[1024];
+                            int bytesRead;
+
+                            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                                fileOutputStream.write(buffer, 0, bytesRead);
+                            }
+                            if(isPresent){
+                                aResponse.setMessage("File " + aRequest.getFileName() + " overridden successfully");
+                            }else{
+                                aResponse.setMessage("File " + aRequest.getFileName() + " added successfully");
+                            }
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                            aResponse.setError("Error while adding file");
                         }
-                        else{
-                            aResponse.setMessage("File added successfully");
-                        }
-
-
-                        File fileData = aRequest.getFileData();
-                        fileServer.put(aRequest.getFileName(), fileData);
-
                         break;
 
                     case "fetch":
-                        if (fileServer.containsKey(aRequest.getFileName())){
-                            fileData = fileServer.get(aRequest.getFileName());
-                            aResponse.setValue(fileData);
-                            aResponse.setMessage("File retrieved successfully");
-                        } else{
-                           aResponse.setError("Error: File does not exist");
+                        Path fileToFetch = Path.of(STORAGE_PATH+aRequest.getFileName());
+                        if (Files.exists(fileToFetch)) {
+                            //
+                            try (InputStream fileInputStream = new FileInputStream(STORAGE_PATH + aRequest.getFileName());
+                                 FileOutputStream fileOutputStream = new FileOutputStream(dataFile) {
+
+                                byte[] buffer = new byte[1024];
+                                int bytesRead;
+
+                                while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                                    fileOutputStream.write(buffer, 0, bytesRead);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                aResponse.setError("Error while fetching");
+                            }
+                        }else{
+                            aResponse.setError("File doesn't exist");
                         }
                         break;
 

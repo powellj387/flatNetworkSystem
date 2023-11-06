@@ -49,7 +49,14 @@ public class Client {
             Response response = sendRequest(request);
 
             // Downloads the file
-            try(OutputStream fos = new FileOutputStream(response.getValue())){ }
+            try(OutputStream fos = new FileOutputStream(response.getValue())){
+
+                // Input stream
+                byte[] buffer = new byte[64*1024];
+                in.read(buffer);
+                fos.write(buffer);
+            }
+
 
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
