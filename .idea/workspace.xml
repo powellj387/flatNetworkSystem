@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e93c0418-69a2-4bca-beb1-0a2a7f1eb9b9" name="Changes" comment="Created basics for the methods">
+    <list default="true" id="e93c0418-69a2-4bca-beb1-0a2a7f1eb9b9" name="Changes" comment="Trying a new method">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -118,7 +117,14 @@
       <option name="project" value="LOCAL" />
       <updated>1698350701836</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Trying a new method">
+      <created>1699287539744</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1699287539744</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -135,7 +141,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Maybe got the server done?" />
     <MESSAGE value="Created basics for the methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created basics for the methods" />
+    <MESSAGE value="Trying a new method" />
+    <option name="LAST_COMMIT_MESSAGE" value="Trying a new method" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

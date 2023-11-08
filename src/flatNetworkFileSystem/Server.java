@@ -59,26 +59,26 @@ public class Server {
                         break;
 
                     case "fetch":
-                        Path fileToFetch = Path.of(STORAGE_PATH+aRequest.getFileName());
-                        if (Files.exists(fileToFetch)) {
-                            //
-                            try (InputStream fileInputStream = new FileInputStream(STORAGE_PATH + aRequest.getFileName());
-                                 FileOutputStream fileOutputStream = new FileOutputStream(dataFile) {
+                        Path fileToFetch = Path.of(STORAGE_PATH + aRequest.getFileName());
 
-                                byte[] buffer = new byte[1024];
+                        if (Files.exists(fileToFetch)) {
+                            try (InputStream fileInputStream = new FileInputStream(fileToFetch.toFile());
+                                 ObjectOutputStream fileOutputStream = new ObjectOutputStream(out)) {
+                                byte[] buffer = new byte[64 * 1024];
                                 int bytesRead;
 
                                 while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                                    fileOutputStream.write(buffer, 0, bytesRead);
+                                    fileOutputStream.writeObject(buffer);
                                 }
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 aResponse.setError("Error while fetching");
                             }
-                        }else{
+                        } else {
                             aResponse.setError("File doesn't exist");
                         }
                         break;
+
 
                     case "append":
                         if (fileServer.containsKey(aRequest.getFileName())){
