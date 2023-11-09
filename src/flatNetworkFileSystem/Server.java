@@ -4,13 +4,11 @@ package flatNetworkFileSystem;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 
 public class Server {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        final String STORAGE_PATH = "server_storage/"; // Directory to store files
+        //final String STORAGE_PATH = "server_storage/"; // Directory to store files
 
         // Create the server socket to accept connections
         ServerSocket serverSocket = new ServerSocket(50702);
@@ -26,90 +24,98 @@ public class Server {
             while (true) {
                 Object request = in.readObject();
                 Request aRequest = (Request) request;
-                Response aResponse = new Response("","",new File(""));
+                Response aResponse = new Response("","",null);
                 switch (aRequest.getMethod()) {
-                    case "add":
-                        boolean isPresent = false;
-                        //create a path for the file on the local computer
-                        Path fileToAdd = Path.of(STORAGE_PATH+aRequest.getFileName());
-                        //Delete the old one with the same name if it exists
-                        isPresent = Files.deleteIfExists(fileToAdd);
+                    case "add" -> {
 
-                        //Make sure there is somewhere to put the file
-                        Files.createDirectories(fileToAdd.getParent()); // Ensure parent directories exist
+                        // Read server file name and local file path from the client
+                        String serverFileName = aRequest.getFileName();
 
-                        try (InputStream fileInputStream = new FileInputStream(aRequest.getFileData());
-                             FileOutputStream fileOutputStream = new FileOutputStream(STORAGE_PATH + aRequest.getFileName())) {
-
+                        // Check if the file already exists on the server
+                        File serverFile = new File(serverFileName);
+                        boolean fileExists = serverFile.exists();
+                        if (fileExists) {
+                            serverFile.delete();
+                        }
+                        try (FileOutputStream fos = new FileOutputStream(serverFileName)) {
+                            FileInputStream fis = new FileInputStream(aRequest.getFileData());
                             byte[] buffer = new byte[1024];
                             int bytesRead;
 
-                            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                                fileOutputStream.write(buffer, 0, bytesRead);
+                            while ((bytesRead = fis.read(buffer)) != -1) {
+                                fos.write(buffer, 0, bytesRead);
                             }
-                            if(isPresent){
-                                aResponse.setMessage("File " + aRequest.getFileName() + " overridden successfully");
-                            }else{
-                                aResponse.setMessage("File " + aRequest.getFileName() + " added successfully");
+
+                            if (fileExists) {
+                                // Send a response to the client indicating whether the file existed and was overwritten
+                                aResponse.setMessage("File " + aRequest.getFileName() + " was overwritten\nFile added successfully");
+                            } else {
+                                aResponse.setMessage("File added successfully");
                             }
-                        }catch (IOException e) {
-                            e.printStackTrace();
-                            aResponse.setError("Error while adding file");
+                        } catch (IOException e) {
+                            aResponse.setError("Error occurred while handling 'add' command: " + e.getMessage());
                         }
-                        break;
+                    }
+                    case "fetch" -> {
+                        // Read server file name and local file path from the client
+                        String serverFileName = aRequest.getFileName();
 
-                    case "fetch":
-                        Path fileToFetch = Path.of(STORAGE_PATH + aRequest.getFileName());
+                        // Check if the file already exists on the server
+                        File serverFile = new File(serverFileName);
+                        boolean fileExists = serverFile.exists();
 
-                        if (Files.exists(fileToFetch)) {
-                            try (InputStream fileInputStream = new FileInputStream(fileToFetch.toFile());
-                                 ObjectOutputStream fileOutputStream = new ObjectOutputStream(out)) {
-                                byte[] buffer = new byte[64 * 1024];
+                        if (fileExists) {
+                            // Read the file content from the server and write it to the client
+                            try (FileInputStream fis = new FileInputStream(serverFileName)) {
+                                FileOutputStream fos = new FileOutputStream(aResponse.getValue());
+                                byte[] buffer = new byte[1024];
                                 int bytesRead;
 
-                                while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                                    fileOutputStream.writeObject(buffer);
+                                while ((bytesRead = fis.read(buffer)) != -1) {
+                                    fos.write(buffer, 0, bytesRead);
                                 }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                aResponse.setError("Error while fetching");
+
                             }
                         } else {
-                            aResponse.setError("File doesn't exist");
+                            // Respond to the client that the file doesn't exist
+                            aResponse.setError("File '" + serverFileName + "' does not exist on the server.");
                         }
-                        break;
 
+                    }
+                    case "append" -> {
+                        // Read server file name and local file path from the client
+                        String serverFileName = aRequest.getFileName();
 
-                    case "append":
-                        if (fileServer.containsKey(aRequest.getFileName())){
-                            File originalFile = fileServer.get(aRequest.getFileName());
-                            File fileToAppend = aRequest.getFileData();
+                        // Check if the file already exists on the server
+                        File serverFile = new File(serverFileName);
+                        boolean fileExists = serverFile.exists();
 
-                            if(originalFile != null && originalFile.exists()){
-                                try (OutputStream fileOutput = new FileOutputStream(originalFile, true);
-                                InputStream fileInput = new FileInputStream(fileToAppend)){
-                                    byte[] buffer = new byte[64*1024];
-                                    int bytesRead;
-                                    while ((bytesRead = fileInput.read(buffer)) != -1){
-                                        fileOutput.write(buffer, 0, bytesRead);
-                                    }
+                        if (fileExists) {
+                            // Read the file content to append from the client and append it to the server file
+                            try (FileOutputStream fos = new FileOutputStream(serverFileName, true)) {
+                                FileInputStream fis = new FileInputStream(aRequest.getFileData());
+                                byte[] buffer = new byte[1024];
+                                int bytesRead;
+
+                                while ((bytesRead = fis.read(buffer)) != -1) {
+                                    fos.write(buffer, 0, bytesRead);
                                 }
+                            }catch (IOException e) {
+                                aResponse.setError("Error occurred while handling 'append' command: " + e.getMessage());
                             }
+                            aResponse.setMessage("File appended successfully. New length: "+serverFile.length());
                         } else{
                             aResponse.setError("File does not exist");
                         }
-                        break;
-
-                    case "exit":
+                    }
+                    case "exit" -> {
                         // Optionally, you can add an "exit" command to close the connection
                         out.close();
                         in.close();
                         aSocket.close();
                         return; // Exit the loop
-
-                    default:
-                        aResponse.setError("Invalid method");
-                        break;
+                    }
+                    default -> aResponse.setError("Invalid method");
                 }
                 out.writeObject(aResponse);
             }
