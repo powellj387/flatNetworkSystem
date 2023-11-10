@@ -31,7 +31,7 @@ public class Client {
             File file = new File(localFilePath);
             byte[] fileData = Files.readAllBytes(file.toPath());
 
-            Request request = new Request("add",serverFileName,fileData);
+            Request request = new Request("add",serverFileName,file);
             Response response =  sendRequest(request);
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
@@ -45,12 +45,18 @@ public class Client {
             File file = new File(localFilePath);
             byte[] fileData = Files.readAllBytes(file.toPath());
 
-            Request request = new Request("fetch", serverFileName, fileData);
+            Request request = new Request("fetch", serverFileName, file);
             Response response = sendRequest(request);
 
             // Downloads the file
             try(OutputStream fos = new FileOutputStream(localFilePath)){
-                fos.write(response.getValue());
+                byte[] buffer = new byte[64*1024];
+                long bytesRead = 0;
+                long newSize = in.readLong();
+
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    fos.write(buffer, 0, (int) bytesRead);
+                }
             }
 
             if (!Objects.equals(response.getMessage(), "")) {
@@ -63,9 +69,9 @@ public class Client {
         public void append(String serverFileName, String localFilePath) throws IOException {
 
             File accessedFile = new File(localFilePath);
-            byte[] byteBuffer = Files.readAllBytes(accessedFile.toPath());
+            //byte[] byteBuffer = Files.readAllBytes(accessedFile.toPath());
 
-            Request request = new Request("append", serverFileName, byteBuffer);
+            Request request = new Request("append", serverFileName, accessedFile);
             Response response = sendRequest(request);
 
             if (!Objects.equals(response.getMessage(), "")) {
@@ -82,8 +88,8 @@ public class Client {
             PrintStream out = new PrintStream(System.out);
 
             client.add("bunny", "C:\\Users\\jacks\\Downloads\\bunny.jpg");
-            client.fetch("bunny", "\\Users\\jacks\\Downloads\\bunny.jpg");
-            client.add("bunny-2", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
-            client.append("bunny", "C:\\Users\\jacks\\Downloads\\bunny-2.jpg");
+            //client.fetch("bunny", "\\Users\\jacks\\Downloads\\bunny.jpg");
+            client.add("alice", "C:\\Users\\jacks\\Downloads\\alice.txt");
+            client.append("alice", "C:\\Users\\jacks\\Downloads\\alice (1).txt");
         }
     }

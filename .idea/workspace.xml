@@ -110,4 +110,25 @@
     <MESSAGE value="Created basics for the methods" />
     <option name="LAST_COMMIT_MESSAGE" value="Created basics for the methods" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="42" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
+          <line>109</line>
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="java.io.FileInputStream" memberName="path" />
+      </pinned-members>
+    </pin-to-top-manager>
+  </component>
 </project>

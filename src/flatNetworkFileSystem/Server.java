@@ -64,21 +64,29 @@ public class Server {
                         File serverFile = new File(serverFileName);
                         boolean fileExists = serverFile.exists();
 
-                        if (fileExists) {
-                            // Read the file content from the server and write it to the client
-                            try (FileInputStream fis = new FileInputStream(serverFileName)) {
-                                FileOutputStream fos = new FileOutputStream(aResponse.getValue());
-                                byte[] buffer = new byte[1024];
+                        try (FileInputStream fis = new FileInputStream(serverFileName)) {
+                            if (fileExists) {
+                                // Read the file content from the server and write it to the client
+                                // FileOutputStream fos = new FileOutputStream(serverFile);
+                                byte[] buffer = new byte[64 * 1024];
                                 int bytesRead;
 
+                                long size = serverFile.length();
+                                out.writeLong(size);
+
                                 while ((bytesRead = fis.read(buffer)) != -1) {
-                                    fos.write(buffer, 0, bytesRead);
+                                    out.write(buffer, 0, bytesRead);
                                 }
 
+                                aResponse.setValue(serverFile);
+
+                                aResponse.setMessage("Fetch successful, file has been saved");
+                            } else {
+                                // Respond to the client that the file doesn't exist
+                                aResponse.setError("File '" + serverFileName + "' does not exist on the server.");
                             }
-                        } else {
-                            // Respond to the client that the file doesn't exist
-                            aResponse.setError("File '" + serverFileName + "' does not exist on the server.");
+                        } catch (IOException e) {
+                            aResponse.setError("Error occurred while handling 'add' command: " + e.getMessage());
                         }
 
                     }
@@ -93,7 +101,9 @@ public class Server {
                         if (fileExists) {
                             // Read the file content to append from the client and append it to the server file
                             try (FileOutputStream fos = new FileOutputStream(serverFileName, true)) {
-                                FileInputStream fis = new FileInputStream(aRequest.getFileData());
+
+                                InputStream fis = new FileInputStream(aRequest.getFileData());
+
                                 byte[] buffer = new byte[1024];
                                 int bytesRead;
 
