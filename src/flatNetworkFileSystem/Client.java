@@ -27,7 +27,7 @@ public class Client {
 
         public void add(String serverFileName, String localFilePath) throws IOException {
             File file = new File(localFilePath);
-            byte[] fileData = Files.readAllBytes(file.toPath());
+           // byte[] fileData = Files.readAllBytes(file.toPath());
 
             Request request = new Request("add",serverFileName,file);
             sendRequest(request);
@@ -49,7 +49,7 @@ public class Client {
         public void fetch(String serverFileName, String localFilePath) throws IOException {
 
             File file = new File(localFilePath);
-            byte[] fileData = Files.readAllBytes(file.toPath());
+            //byte[] fileData = Files.readAllBytes(file.toPath());
 
             Request request = new Request("fetch", serverFileName, file);
             sendRequest(request);
@@ -101,15 +101,16 @@ public class Client {
         }
 
         public static void main(String[] args) throws IOException {
-            Client client = new Client("localhost", 50702);
+            Client client = new Client("pie.lynchburg.edu", 50702);
 
             Scanner scan = new Scanner(System.in);
             PrintStream out = new PrintStream(System.out);
 
-            client.add("bunny", "C:\\Users\\jacks\\Downloads\\bunny.jpg");
-            client.fetch("bunny", "\\Users\\jacks\\Downloads\\bunny.jpg");
-            client.add("alice", "C:\\Users\\jacks\\Downloads\\alice.txt");
-            client.append("alice", "C:\\Users\\jacks\\Downloads\\alice (1).txt");
-            client.fetch("alice", "C:\\Users\\jacks\\Downloads\\alice.txt");
+            client.add("C:\\Users\\powellj387\\Downloads\\bunny.jpg","bunny");
+            client.add("C:\\Users\\powellj387\\Downloads\\alice.txt", "alice");
+           // client.append("alice", "C:\\Users\\powellj387\\Downloads\\alice (1).txt");
+
+            client.fetch("alice","C:\\Users\\powellj387\\Downloads\\aliceFetched.txt");
+            client.fetch( "bunny","C:\\Users\\powellj387\\Downloads\\bunnyFetched.jpg");
         }
     }

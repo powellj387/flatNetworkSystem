@@ -63,7 +63,7 @@ public class Server {
         if (fileExists) {
             serverFile.delete();
         }
-        try (FileOutputStream fos = new FileOutputStream(serverFileName)) {
+        try (FileOutputStream fos = new FileOutputStream("/home/lynchburg.edu/powellj387/server_storage/"+serverFileName)) {
             FileInputStream fis = new FileInputStream(aRequest.getFileData());
             byte[] buffer = new byte[64*1024];
             int bytesRead;
