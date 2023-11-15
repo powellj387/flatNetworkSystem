@@ -17,13 +17,11 @@ public class Client {
             in = new ObjectInputStream(socket.getInputStream());
         }
 
-        public Response sendRequest(Request request) {
+        public void sendRequest(Request request) {
             try {
                 out.writeObject(request);
-                return (Response) in.readObject();
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
-                return null;
             }
         }
 
@@ -32,7 +30,15 @@ public class Client {
             byte[] fileData = Files.readAllBytes(file.toPath());
 
             Request request = new Request("add",serverFileName,file);
-            Response response =  sendRequest(request);
+            sendRequest(request);
+
+            Response response = null;
+            try {
+                response = (Response)in.readObject();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
             } else {
@@ -46,17 +52,23 @@ public class Client {
             byte[] fileData = Files.readAllBytes(file.toPath());
 
             Request request = new Request("fetch", serverFileName, file);
-            Response response = sendRequest(request);
+            sendRequest(request);
 
             // Downloads the file
             try(OutputStream fos = new FileOutputStream(localFilePath)){
                 byte[] buffer = new byte[64*1024];
                 long bytesRead = 0;
-                long newSize = in.readLong();
 
                 while ((bytesRead = in.read(buffer)) != -1) {
                     fos.write(buffer, 0, (int) bytesRead);
                 }
+            }
+
+            Response response = null;
+            try {
+                response = (Response)in.readObject();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
 
             if (!Objects.equals(response.getMessage(), "")) {
@@ -72,7 +84,14 @@ public class Client {
             //byte[] byteBuffer = Files.readAllBytes(accessedFile.toPath());
 
             Request request = new Request("append", serverFileName, accessedFile);
-            Response response = sendRequest(request);
+            sendRequest(request);
+
+            Response response = null;
+            try {
+                response = (Response)in.readObject();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
 
             if (!Objects.equals(response.getMessage(), "")) {
                 System.out.println("Response: " + response.getMessage());
@@ -88,8 +107,9 @@ public class Client {
             PrintStream out = new PrintStream(System.out);
 
             client.add("bunny", "C:\\Users\\jacks\\Downloads\\bunny.jpg");
-            //client.fetch("bunny", "\\Users\\jacks\\Downloads\\bunny.jpg");
+            client.fetch("bunny", "\\Users\\jacks\\Downloads\\bunny.jpg");
             client.add("alice", "C:\\Users\\jacks\\Downloads\\alice.txt");
             client.append("alice", "C:\\Users\\jacks\\Downloads\\alice (1).txt");
+            client.fetch("alice", "C:\\Users\\jacks\\Downloads\\alice.txt");
         }
     }

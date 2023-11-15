@@ -114,14 +114,14 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java</url>
-          <line>61</line>
-          <option name="timeStamp" value="42" />
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
+          <line>132</line>
+          <option name="timeStamp" value="55" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
-          <line>109</line>
-          <option name="timeStamp" value="46" />
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="56" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
