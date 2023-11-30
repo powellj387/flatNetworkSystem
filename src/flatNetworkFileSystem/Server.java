@@ -8,10 +8,9 @@ import java.util.HashMap;
 
 public class Server {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        //final String STORAGE_PATH = "server_storage/"; // Directory to store files
 
         // Create the server socket to accept connections
-        ServerSocket serverSocket = new ServerSocket(50702);
+        ServerSocket serverSocket = new ServerSocket(50900);
 
         while (true) {
         System.out.println("Allowing connections");
@@ -27,8 +26,10 @@ public class Server {
                 Response aResponse = new Response("","",null);
                 switch (aRequest.getMethod()) {
                     case "add" -> {
-                        handleAdd(aRequest, aResponse);
+                        handleAdd(aRequest, in, out);
+                        out.writeObject("aResponse");
                     }
+
                     case "fetch" -> {
                         handleFetch(aRequest, aResponse, out);
                     }
@@ -52,34 +53,39 @@ public class Server {
         }
         }
     }
-
-    private static void handleAdd(Request aRequest, Response aResponse) {
+    public static String STORAGE_PATH = "/home/lynchburg.edu/wisej797/"; // Directory to store files
+    //public static String STORAGE_PATH = "C:\\Users\\jacks\\Downloads\\";
+    private static void handleAdd(Request aRequest, ObjectInputStream in, ObjectOutputStream out) throws IOException {
         // Read server file name and local file path from the client
         String serverFileName = aRequest.getFileName();
 
         // Check if the file already exists on the server
-        File serverFile = new File(serverFileName);
+        File serverFile = new File(STORAGE_PATH+serverFileName);
         boolean fileExists = serverFile.exists();
         if (fileExists) {
-            serverFile.delete();
+            //serverFile.delete();
         }
-        try (FileOutputStream fos = new FileOutputStream("/home/lynchburg.edu/powellj387/server_storage/"+serverFileName)) {
-            FileInputStream fis = new FileInputStream(aRequest.getFileData());
-            byte[] buffer = new byte[64*1024];
-            int bytesRead;
 
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                fos.write(buffer, 0, bytesRead);
+        //Download the data to the server
+        try (FileOutputStream fos = new FileOutputStream(serverFile)) {
+            //FileInputStream fis = new FileInputStream(aRequest.getFileData());
+            byte[] buffer = new byte[2048];
+            long bytesRead;
+
+            while ((bytesRead = in.read(buffer)) != -1) {
+                fos.write(buffer, 0, (int)bytesRead);
             }
+            /*
 
             if (fileExists) {
                 // Send a response to the client indicating whether the file existed and was overwritten
-                aResponse.setMessage("File " + aRequest.getFileName() + " was overwritten, File added successfully");
+                out.writeObject("File " + aRequest.getFileName() + " was overwritten, File added successfully");
             } else {
-                aResponse.setMessage("File added successfully");
+                out.writeObject("File added successfully");
             }
+            */
         } catch (IOException e) {
-            aResponse.setError("Error occurred while handling 'add' command: " + e.getMessage());
+            out.writeObject("Error occurred while handling 'add' command: " + e.getMessage());
         }
     }
 

@@ -26,24 +26,40 @@ public class Client {
         }
 
         public void add(String serverFileName, String localFilePath) throws IOException {
-            File file = new File(localFilePath);
+            File file = new File("C:\\Users\\jacks\\Downloads\\bunny.jpg");
            // byte[] fileData = Files.readAllBytes(file.toPath());
 
             Request request = new Request("add",serverFileName,file);
             sendRequest(request);
 
-            Response response = null;
+
+            //Send the file data over
+            try (FileInputStream fis = new FileInputStream(localFilePath)){
+                byte[] buffer = new byte[2048];
+                long bytesRead = 0;
+
+                while((bytesRead =fis.read(buffer)) != -1){
+                    out.write(buffer, 0, (int)bytesRead);
+                }
+            }
+            System.out.println("Test");
+
+            out.flush();
+
+            /*
+            String response = null;
             try {
-                response = (Response)in.readObject();
+                response = (String)in.readObject();
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
 
-            if (!Objects.equals(response.getMessage(), "")) {
-                System.out.println("Response: " + response.getMessage());
+            if (!Objects.equals(response, "")) {
+                System.out.println("Response: " + response);
             } else {
-                System.out.println("Error: " + response.getError());
+                System.out.println("Error: " + response);
             }
+            */
         }
 
         public void fetch(String serverFileName, String localFilePath) throws IOException {
@@ -101,16 +117,16 @@ public class Client {
         }
 
         public static void main(String[] args) throws IOException {
-            Client client = new Client("pie.lynchburg.edu", 50702);
+            Client client = new Client("pie.lynchburg.edu", 50900);
 
             Scanner scan = new Scanner(System.in);
             PrintStream out = new PrintStream(System.out);
 
-            client.add("C:\\Users\\powellj387\\Downloads\\bunny.jpg","bunny");
-            client.add("C:\\Users\\powellj387\\Downloads\\alice.txt", "alice");
+            client.add("bunny.jpg","C:\\Users\\jacks\\Downloads\\bunny.jpg");
+            client.add("alice.txt", "C:\\Users\\jacks\\Downloads\\alice.txt");
            // client.append("alice", "C:\\Users\\powellj387\\Downloads\\alice (1).txt");
 
-            client.fetch("alice","C:\\Users\\powellj387\\Downloads\\aliceFetched.txt");
-            client.fetch( "bunny","C:\\Users\\powellj387\\Downloads\\bunnyFetched.jpg");
+            //client.fetch("alice","C:\\Users\\powellj387\\Downloads\\aliceFetched.txt");
+            //client.fetch( "bunny","C:\\Users\\powellj387\\Downloads\\bunnyFetched.jpg");
         }
     }
