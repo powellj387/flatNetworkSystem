@@ -46,20 +46,20 @@ public class Client {
 
             out.flush();
 
-            /*
-            String response = null;
+
+            Response response = null;
             try {
-                response = (String)in.readObject();
+                response = (Response)in.readObject();
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
 
-            if (!Objects.equals(response, "")) {
-                System.out.println("Response: " + response);
+            if (!Objects.equals(response.getMessage(), "")) {
+                System.out.println("Response: " + response.getMessage());
             } else {
-                System.out.println("Error: " + response);
+                System.out.println("Error: " + response.getError());
             }
-            */
+
         }
 
         public void fetch(String serverFileName, String localFilePath) throws IOException {
@@ -117,7 +117,7 @@ public class Client {
         }
 
         public static void main(String[] args) throws IOException {
-            Client client = new Client("pie.lynchburg.edu", 50900);
+            Client client = new Client("localhost", 50900);
 
             Scanner scan = new Scanner(System.in);
             PrintStream out = new PrintStream(System.out);

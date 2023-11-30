@@ -62,20 +62,16 @@ public class Server {
         // Check if the file already exists on the server
         File serverFile = new File(STORAGE_PATH+serverFileName);
         boolean fileExists = serverFile.exists();
-        if (fileExists) {
-            //serverFile.delete();
-        }
 
         //Download the data to the server
         try (FileOutputStream fos = new FileOutputStream(serverFile)) {
-            //FileInputStream fis = new FileInputStream(aRequest.getFileData());
             byte[] buffer = new byte[2048];
             long bytesRead;
 
             while ((bytesRead = in.read(buffer)) != -1) {
                 fos.write(buffer, 0, (int)bytesRead);
             }
-            /*
+            int test=0;
 
             if (fileExists) {
                 // Send a response to the client indicating whether the file existed and was overwritten
@@ -83,7 +79,6 @@ public class Server {
             } else {
                 out.writeObject("File added successfully");
             }
-            */
         } catch (IOException e) {
             out.writeObject("Error occurred while handling 'add' command: " + e.getMessage());
         }
