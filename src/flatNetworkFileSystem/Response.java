@@ -6,12 +6,12 @@ import java.io.Serializable;
 public class Response implements Serializable {
     private String message;
     private String error;
-    private File value;
+    private long value;
 
-        public Response(String message, String error, File value) {
+        public Response(String message, String error, long fileSize) {
         this.message = message;
         this.error = error;
-        this.value = value;
+        this.value = fileSize;
     }
 
         public String getMessage() {
@@ -22,11 +22,11 @@ public class Response implements Serializable {
             this.message = message;
         }
 
-        public File getValue() {return value;}
+        public long getValue() {return value;}
 
         public void setError(String error) {this.error = error;}
 
-        public void setValue(File value) {this.value = value;}
+        public void setValue(long value) {this.value = value;}
 
         public String getError() {return error;}
     }

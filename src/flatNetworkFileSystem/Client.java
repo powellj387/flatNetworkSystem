@@ -26,26 +26,24 @@ public class Client {
         }
 
         public void add(String serverFileName, String localFilePath) throws IOException {
-            File file = new File("C:\\Users\\jacks\\Downloads\\bunny.jpg");
-           // byte[] fileData = Files.readAllBytes(file.toPath());
+            File file = new File(localFilePath);
+            long totalBytes = file.length();
 
-            Request request = new Request("add",serverFileName,file);
+            Request request = new Request("add",serverFileName,totalBytes);
             sendRequest(request);
-
 
             //Send the file data over
             try (FileInputStream fis = new FileInputStream(localFilePath)){
                 byte[] buffer = new byte[2048];
                 long bytesRead = 0;
 
-                while((bytesRead =fis.read(buffer)) != -1){
-                    out.write(buffer, 0, (int)bytesRead);
+                while(bytesRead != totalBytes){
+                    long bytesReadInThisIteration = fis.read(buffer);
+                    out.write(buffer, 0, (int)bytesReadInThisIteration);
+                    out.flush();
+                    bytesRead += bytesReadInThisIteration;
                 }
             }
-            System.out.println("Test");
-
-            out.flush();
-
 
             Response response = null;
             try {
@@ -65,18 +63,21 @@ public class Client {
         public void fetch(String serverFileName, String localFilePath) throws IOException {
 
             File file = new File(localFilePath);
-            //byte[] fileData = Files.readAllBytes(file.toPath());
+            long totalBytes = file.length();
 
-            Request request = new Request("fetch", serverFileName, file);
+            Request request = new Request("fetch", serverFileName, totalBytes);
             sendRequest(request);
 
             // Downloads the file
             try(OutputStream fos = new FileOutputStream(localFilePath)){
-                byte[] buffer = new byte[64*1024];
+                byte[] buffer = new byte[2048];
                 long bytesRead = 0;
+                totalBytes = in.readLong();
 
-                while ((bytesRead = in.read(buffer)) != -1) {
-                    fos.write(buffer, 0, (int) bytesRead);
+                while (bytesRead != totalBytes) {
+                    long bytesReadInThisIteration = in.read(buffer);
+                    fos.write(buffer, 0, (int)bytesReadInThisIteration);
+                    bytesRead += bytesReadInThisIteration;
                 }
             }
 
@@ -96,11 +97,26 @@ public class Client {
 
         public void append(String serverFileName, String localFilePath) throws IOException {
 
-            File accessedFile = new File(localFilePath);
-            //byte[] byteBuffer = Files.readAllBytes(accessedFile.toPath());
+            File file = new File(localFilePath);
+            long totalBytes = file.length();
 
-            Request request = new Request("append", serverFileName, accessedFile);
+            Request request = new Request("append",serverFileName,totalBytes);
             sendRequest(request);
+
+            //Send the file data over
+            try (FileInputStream fis = new FileInputStream(localFilePath)){
+                byte[] buffer = new byte[2048];
+                long bytesRead = 0;
+
+                while(bytesRead != totalBytes){
+                    long bytesReadInThisIteration = fis.read(buffer);
+                    out.write(buffer, 0, (int)bytesReadInThisIteration);
+                    out.flush();
+                    bytesRead += bytesReadInThisIteration;
+                }
+            }
+
+
 
             Response response = null;
             try {
@@ -117,16 +133,16 @@ public class Client {
         }
 
         public static void main(String[] args) throws IOException {
-            Client client = new Client("localhost", 50900);
+            Client client = new Client("pie.lynchburg.edu", 50900);
 
             Scanner scan = new Scanner(System.in);
             PrintStream out = new PrintStream(System.out);
 
             client.add("bunny.jpg","C:\\Users\\jacks\\Downloads\\bunny.jpg");
             client.add("alice.txt", "C:\\Users\\jacks\\Downloads\\alice.txt");
-           // client.append("alice", "C:\\Users\\powellj387\\Downloads\\alice (1).txt");
+            client.append("alice.txt", "C:\\Users\\jacks\\Downloads\\alice (1).txt");
 
-            //client.fetch("alice","C:\\Users\\powellj387\\Downloads\\aliceFetched.txt");
-            //client.fetch( "bunny","C:\\Users\\powellj387\\Downloads\\bunnyFetched.jpg");
+            client.fetch("alice.txt","C:\\Users\\jacks\\Downloads\\aliceFetched.txt");
+            client.fetch( "bunny.jpg","C:\\Users\\jacks\\Downloads\\bunnyFetched.jpg");
         }
     }

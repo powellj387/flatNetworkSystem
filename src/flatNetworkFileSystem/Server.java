@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class Server {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 
-        // Create the server socket to accept connections
+        // Create the server socket to accept connections 50702 : 50900
         ServerSocket serverSocket = new ServerSocket(50900);
 
         while (true) {
@@ -23,18 +23,16 @@ public class Server {
             while (true) {
                 Object request = in.readObject();
                 Request aRequest = (Request) request;
-                Response aResponse = new Response("","",null);
+                Response aResponse = new Response("","",0);
                 switch (aRequest.getMethod()) {
                     case "add" -> {
-                        handleAdd(aRequest, in, out);
-                        out.writeObject("aResponse");
+                        handleAdd(aRequest, aResponse, in);
                     }
-
                     case "fetch" -> {
                         handleFetch(aRequest, aResponse, out);
                     }
                     case "append" -> {
-                        handleAppend(aRequest, aResponse);
+                        handleAppend(aRequest, aResponse, in);
                     }
                     case "exit" -> {
                         // Optionally, you can add an "exit" command to close the connection
@@ -51,11 +49,12 @@ public class Server {
             // Handle the IOException that occurs when the client disconnects
             e.printStackTrace();
         }
+        serverSocket.close();
         }
     }
     public static String STORAGE_PATH = "/home/lynchburg.edu/wisej797/"; // Directory to store files
     //public static String STORAGE_PATH = "C:\\Users\\jacks\\Downloads\\";
-    private static void handleAdd(Request aRequest, ObjectInputStream in, ObjectOutputStream out) throws IOException {
+    private static void handleAdd(Request aRequest, Response aResponse, ObjectInputStream in) throws IOException {
         // Read server file name and local file path from the client
         String serverFileName = aRequest.getFileName();
 
@@ -66,25 +65,27 @@ public class Server {
         //Download the data to the server
         try (FileOutputStream fos = new FileOutputStream(serverFile)) {
             byte[] buffer = new byte[2048];
-            long bytesRead;
+            long bytesRead = 0;
+            long totalBytes = aRequest.getFileSize();
 
-            while ((bytesRead = in.read(buffer)) != -1) {
-                fos.write(buffer, 0, (int)bytesRead);
+            while (bytesRead != totalBytes) {
+                long bytesReadInThisIteration = in.read(buffer);
+                fos.write(buffer, 0, (int)bytesReadInThisIteration);
+                bytesRead += bytesReadInThisIteration;
             }
-            int test=0;
 
             if (fileExists) {
                 // Send a response to the client indicating whether the file existed and was overwritten
-                out.writeObject("File " + aRequest.getFileName() + " was overwritten, File added successfully");
+                aResponse.setMessage("File " + aRequest.getFileName() + " was overwritten, File added successfully");
             } else {
-                out.writeObject("File added successfully");
+                aResponse.setMessage("File added successfully");
             }
         } catch (IOException e) {
-            out.writeObject("Error occurred while handling 'add' command: " + e.getMessage());
+            aResponse.setError("Error occurred while handling 'add' command: " + e.getMessage());
         }
     }
 
-    public static void handleAppend(Request aRequest, Response aResponse){
+    public static void handleAppend(Request aRequest, Response aResponse, ObjectInputStream in){
         // Read server file name and local file path from the client
         String serverFileName = aRequest.getFileName();
 
@@ -94,20 +95,22 @@ public class Server {
 
         if (fileExists) {
             // Read the file content to append from the client and append it to the server file
-            try (FileOutputStream fos = new FileOutputStream(serverFileName, true)) {
+            try (FileOutputStream fos = new FileOutputStream(STORAGE_PATH+serverFileName, true)) {
 
-                InputStream fis = new FileInputStream(aRequest.getFileData());
+                byte[] buffer = new byte[2048];
+                long bytesRead = 0;
+                long totalBytes = aRequest.getFileSize();
 
-                byte[] buffer = new byte[64*1024];
-                int bytesRead;
-
-                while ((bytesRead = fis.read(buffer)) != -1) {
-                    fos.write(buffer, 0, bytesRead);
+                while (bytesRead != totalBytes) {
+                    long bytesReadInThisIteration = in.read(buffer);
+                    fos.write(buffer);
+                    bytesRead += bytesReadInThisIteration;
                 }
+
             }catch (IOException e) {
                 aResponse.setError("Error occurred while handling 'append' command: " + e.getMessage());
             }
-            aResponse.setMessage("File appended successfully. New length: "+serverFile.length());
+            aResponse.setMessage("File appended successfully. New length: " + serverFile.length());
         } else{
             aResponse.setError("File does not exist");
         }
@@ -117,21 +120,25 @@ public class Server {
         String serverFileName = aRequest.getFileName();
 
         // Check if the file already exists on the server
-        File serverFile = new File(serverFileName);
+        File serverFile = new File(STORAGE_PATH+serverFileName);
+        long totalBytes = serverFile.length();
         boolean fileExists = serverFile.exists();
 
-        try (FileInputStream fis = new FileInputStream(serverFileName)) {
+        try (FileInputStream fis = new FileInputStream(STORAGE_PATH+serverFileName)) {
             if (fileExists) {
                 // Read the file content from the server and write it to the client
                 // FileOutputStream fos = new FileOutputStream(serverFile);
-                byte[] buffer = new byte[64 * 1024];
-                int bytesRead;
+                byte[] buffer = new byte[2048];
+                long bytesRead = 0;
+                out.writeLong(totalBytes);
 
-                while ((bytesRead = fis.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
+                aResponse.setValue(totalBytes);
+
+                while (bytesRead != totalBytes) {
+                    long bytesReadInThisIteration = fis.read(buffer);
+                    out.write(buffer, 0, (int)bytesReadInThisIteration);
+                    bytesRead += bytesReadInThisIteration;
                 }
-
-                aResponse.setValue(serverFile);
 
                 aResponse.setMessage("Fetch successful, file has been saved");
             } else {

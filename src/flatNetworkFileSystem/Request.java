@@ -1,18 +1,17 @@
 //@author Julian Powell
 
 package flatNetworkFileSystem;
-import java.io.File;
 import java.io.Serializable;
 
 public class Request implements Serializable {
     private String method;
     private String fileName;
-    private File fileData;
+    private long fileData;
 
-    public Request(String method, String fileName, File fileData) {
+    public Request(String method, String fileName, long fileSize) {
         this.method = method;
         this.fileName = fileName;
-        this.fileData = fileData;
+        this.fileData = fileSize;
     }
 
     public String getMethod() {
@@ -23,7 +22,7 @@ public class Request implements Serializable {
         return fileName;
     }
 
-    public File getFileData() {
+    public long getFileSize() {
         return fileData;
     }
 }
