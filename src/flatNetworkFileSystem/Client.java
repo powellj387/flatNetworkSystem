@@ -2,6 +2,7 @@ package flatNetworkFileSystem;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.Scanner;
@@ -12,7 +13,8 @@ public class Client {
         private ObjectInputStream in;
         private static final int TIMEOUT_MS = 10000; // 10 seconds timeout
 
-        public Client(String host, int port) throws IOException {
+
+    public Client(String host, int port) throws IOException {
             socket = new Socket(host, port);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
@@ -143,17 +145,20 @@ public class Client {
             socket.close();
         }
 
-        public static void main(String[] args) throws IOException {
-            Client client = new Client("pie.lynchburg.edu", 50900);
-
+        public static void main(String[] args) throws IOException, InterruptedException {
+            Client client = new Client("localhost", 50900);
             Scanner scan = new Scanner(System.in);
             PrintStream out = new PrintStream(System.out);
 
-            client.add("bunny.jpg","C:\\Users\\jacks\\Downloads\\bunny.jpg");
-            client.add("alice.txt", "C:\\Users\\jacks\\Downloads\\alice.txt");
-            client.append("alice.txt", "C:\\Users\\jacks\\Downloads\\alice (1).txt");
+            client.add("bunny.jpg","C:\\Users\\powellj387\\Downloads\\alice.txt");
 
-            client.fetch("alice.txt","C:\\Users\\jacks\\Downloads\\aliceFetched.txt");
-            client.fetch( "bunny.jpg","C:\\Users\\jacks\\Downloads\\bunnyFetched.jpg");
+            //Thread.sleep(10000);
+
+            //client.quit();
+            //client.add("alice.txt", "C:\\Users\\powellj387\\Downloads\\alice.txt");
+           // client.append("alice.txt", "C:\\Users\\jacks\\Downloads\\alice (1).txt");
+
+            //client.fetch("alice.txt","C:\\Users\\jacks\\Downloads\\aliceFetched.txt");
+            //client.fetch( "bunny.jpg","C:\\Users\\jacks\\Downloads\\bunnyFetched.jpg");*/
         }
     }

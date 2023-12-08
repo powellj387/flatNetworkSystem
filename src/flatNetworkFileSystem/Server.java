@@ -4,23 +4,27 @@ package flatNetworkFileSystem;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 public class Server {
     private static final int TIMEOUT_MS = 10000; // 10 seconds timeout
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, SocketTimeoutException, InterruptedException {
         // Create the server socket to accept connections 50702 : 50900
         ServerSocket serverSocket = new ServerSocket(50900);
 
         while (true) {
         System.out.println("Allowing connections");
+
         Socket aSocket = serverSocket.accept();
+        Thread.sleep(11000);
+        handleTimer(aSocket);
 
         ObjectOutputStream out = new ObjectOutputStream(aSocket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(aSocket.getInputStream());
 
         try {
-            aSocket.setSoTimeout(TIMEOUT_MS);
+
             while (true) {
                 Object request = in.readObject();
                 Request aRequest = (Request) request;
@@ -36,7 +40,6 @@ public class Server {
                         handleAppend(aRequest, aResponse, in);
                     }
                     case "quit" -> {
-                        // Optionally, you can add an "exit" command to close the connection
                         out.close();
                         in.close();
                         aSocket.close();
@@ -44,18 +47,21 @@ public class Server {
                     }
                     default -> aResponse.setError("Invalid method");
                 }
+
                 out.writeObject(aResponse);
             }
         } catch (IOException e) {
             // Handle the IOException that occurs when the client disconnects
-            e.printStackTrace();
-            serverSocket.close();
+           e.printStackTrace();
         }
-        serverSocket.close();
         }
+        }
+//    public static String STORAGE_PATH = "/home/lynchburg.edu/wisej797/"; // Directory to store files
+    public static String STORAGE_PATH = "C:\\Users\\powellj387\\Downloads\\";
+
+    private static void handleTimer(Socket socket) throws SocketException {
+        socket.setSoTimeout(TIMEOUT_MS);
     }
-    public static String STORAGE_PATH = "/home/lynchburg.edu/wisej797/"; // Directory to store files
-    //public static String STORAGE_PATH = "C:\\Users\\jacks\\Downloads\\";
     private static void handleAdd(Request aRequest, Response aResponse, ObjectInputStream in) throws IOException {
         // Read server file name and local file path from the client
         String serverFileName = aRequest.getFileName();

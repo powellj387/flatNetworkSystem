@@ -52,9 +52,22 @@
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
 }</component>
-  <component name="RunManager" selected="Application.Client">
+  <component name="RunManager">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="flatNetworkFileSystem.Client" />
+      <module name="networkProject2" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="flatNetworkFileSystem.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="flatNetworkFileSystem.Server" />
       <module name="networkProject2" />
       <extension name="coverage">
         <pattern>
@@ -85,12 +98,14 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Application.Server" />
       <item itemvalue="Application.Client" />
       <item itemvalue="JAR Application.flatFileSystem" />
       <item itemvalue="JAR Application.flatFileServer" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Server" />
         <item itemvalue="Application.Client" />
       </list>
     </recent_temporary>
