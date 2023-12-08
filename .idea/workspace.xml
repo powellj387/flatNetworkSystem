@@ -12,8 +12,6 @@
     <list default="true" id="e93c0418-69a2-4bca-beb1-0a2a7f1eb9b9" name="Changes" comment="test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Request.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Request.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Response.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,7 +52,7 @@
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Client">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="flatNetworkFileSystem.Client" />
       <module name="networkProject2" />
@@ -162,25 +160,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="test" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
-          <line>142</line>
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java</url>
-          <line>120</line>
-          <option name="timeStamp" value="52" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java</url>
-          <line>31</line>
-          <option name="timeStamp" value="55" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="java.io.FileInputStream" memberName="path" />

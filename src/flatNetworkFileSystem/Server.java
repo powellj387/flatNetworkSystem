@@ -7,8 +7,8 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class Server {
+    private static final int TIMEOUT_MS = 10000; // 10 seconds timeout
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-
         // Create the server socket to accept connections 50702 : 50900
         ServerSocket serverSocket = new ServerSocket(50900);
 
@@ -20,6 +20,7 @@ public class Server {
         ObjectInputStream in = new ObjectInputStream(aSocket.getInputStream());
 
         try {
+            aSocket.setSoTimeout(TIMEOUT_MS);
             while (true) {
                 Object request = in.readObject();
                 Request aRequest = (Request) request;
@@ -34,7 +35,7 @@ public class Server {
                     case "append" -> {
                         handleAppend(aRequest, aResponse, in);
                     }
-                    case "exit" -> {
+                    case "quit" -> {
                         // Optionally, you can add an "exit" command to close the connection
                         out.close();
                         in.close();
@@ -48,6 +49,7 @@ public class Server {
         } catch (IOException e) {
             // Handle the IOException that occurs when the client disconnects
             e.printStackTrace();
+            serverSocket.close();
         }
         serverSocket.close();
         }

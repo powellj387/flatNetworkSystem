@@ -10,6 +10,7 @@ public class Client {
         private Socket socket;
         private ObjectOutputStream out;
         private ObjectInputStream in;
+        private static final int TIMEOUT_MS = 10000; // 10 seconds timeout
 
         public Client(String host, int port) throws IOException {
             socket = new Socket(host, port);
@@ -19,6 +20,7 @@ public class Client {
 
         public void sendRequest(Request request) {
             try {
+                socket.setSoTimeout(TIMEOUT_MS);
                 out.writeObject(request);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -116,8 +118,6 @@ public class Client {
                 }
             }
 
-
-
             Response response = null;
             try {
                 response = (Response)in.readObject();
@@ -130,6 +130,17 @@ public class Client {
             } else {
                 System.out.println("Error: " + response.getError());
             }
+        }
+
+        public void quit() throws IOException {
+            // Send an exit command to the server
+            Request request = new Request("quit", "", 0);
+            sendRequest(request);
+
+            // Close resources
+            out.close();
+            in.close();
+            socket.close();
         }
 
         public static void main(String[] args) throws IOException {
