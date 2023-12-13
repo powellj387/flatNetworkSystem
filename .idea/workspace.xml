@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="networkProject2:jar4" />
+      <artifact name="networkProject2:jar6" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
@@ -10,6 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e93c0418-69a2-4bca-beb1-0a2a7f1eb9b9" name="Changes" comment="test">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/networkProject2_jar3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/networkProject2_jar4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/networkProject2_jar5.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java" afterDir="false" />
@@ -41,17 +44,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/jacks/OneDrive/Documents/GitHub/flatNetworkSystem/out&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/jacks/OneDrive/Documents/GitHub/flatNetworkSystem/out",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="flatNetworkFileSystem.Client" />
@@ -105,8 +109,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Server" />
         <item itemvalue="Application.Client" />
+        <item itemvalue="Application.Server" />
       </list>
     </recent_temporary>
   </component>
@@ -175,6 +179,35 @@
     <option name="LAST_COMMIT_MESSAGE" value="test" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
+          <line>115</line>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
+          <line>120</line>
+          <option name="timeStamp" value="73" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Server.java</url>
+          <line>189</line>
+          <option name="timeStamp" value="75" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/flatNetworkFileSystem/Client.java</url>
+          <line>115</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="java.io.FileInputStream" memberName="path" />
@@ -185,6 +218,8 @@
         <watch expression="bytesReadInThisIteration" language="JAVA" />
         <watch expression="totalBytes" language="JAVA" />
         <watch expression="bytesRead" language="JAVA" />
+        <watch expression="checkSumCode" language="JAVA" />
+        <watch expression="checkSumCode.length" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>

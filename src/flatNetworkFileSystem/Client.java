@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -29,24 +32,36 @@ public class Client {
             }
         }
 
-        public void add(String serverFileName, String localFilePath) throws IOException {
+        public void add(String serverFileName, String localFilePath) throws IOException, NoSuchAlgorithmException {
             File file = new File(localFilePath);
             long totalBytes = file.length();
 
             Request request = new Request("add",serverFileName,totalBytes);
             sendRequest(request);
 
+            MessageDigest checkSum = MessageDigest.getInstance("SHA-256");
+
             //Send the file data over
             try (FileInputStream fis = new FileInputStream(localFilePath)){
                 byte[] buffer = new byte[2048];
                 long bytesRead = 0;
 
-                while(bytesRead != totalBytes){
+                while (bytesRead != totalBytes) {
                     long bytesReadInThisIteration = fis.read(buffer);
-                    out.write(buffer, 0, (int)bytesReadInThisIteration);
+                    checkSum.update(buffer, 0, (int) bytesReadInThisIteration);
+                    out.write(buffer, 0, (int) bytesReadInThisIteration);
                     out.flush();
                     bytesRead += bytesReadInThisIteration;
                 }
+
+                // CheckSum
+                byte[] checkSumCode = checkSum.digest();
+
+                out.writeLong(checkSumCode.length);
+                out.flush();
+
+                out.write(checkSumCode);
+                out.flush();
             }
 
             Response response = null;
@@ -64,7 +79,7 @@ public class Client {
 
         }
 
-        public void fetch(String serverFileName, String localFilePath) throws IOException {
+        public void fetch(String serverFileName, String localFilePath) throws IOException, NoSuchAlgorithmException {
 
             File file = new File(localFilePath);
             long totalBytes = file.length();
@@ -72,16 +87,33 @@ public class Client {
             Request request = new Request("fetch", serverFileName, totalBytes);
             sendRequest(request);
 
+            MessageDigest checkSum = MessageDigest.getInstance("SHA-256");
+            boolean isCorrupt = false;
+
             // Downloads the file
-            try(OutputStream fos = new FileOutputStream(localFilePath)){
+            try(OutputStream fos = new FileOutputStream(file)){
                 byte[] buffer = new byte[2048];
                 long bytesRead = 0;
                 totalBytes = in.readLong();
 
                 while (bytesRead != totalBytes) {
                     long bytesReadInThisIteration = in.read(buffer);
+                    checkSum.update(buffer, 0, (int)bytesReadInThisIteration - 1);
                     fos.write(buffer, 0, (int)bytesReadInThisIteration);
                     bytesRead += bytesReadInThisIteration;
+                }
+                fos.close();
+
+                byte[] checkSumCodeServer = checkSum.digest();
+
+                long checkSumLength = in.readLong();
+
+                byte[] checkSumCodeClient = new byte[(int)checkSumLength];
+                in.read(checkSumCodeClient);
+
+                if (!Arrays.equals(checkSumCodeClient, checkSumCodeServer)){
+                    isCorrupt = true;
+                    file.delete();
                 }
             }
 
@@ -93,19 +125,27 @@ public class Client {
             }
 
             if (!Objects.equals(response.getMessage(), "")) {
-                System.out.println("Response: " + response.getMessage());
+                if (!isCorrupt) {
+                    System.out.println("Response: " + response.getMessage());
+                }
+                else{
+                    System.out.println("Response: File data was corrupted");
+                }
             } else {
                 System.out.println("Error: " + response.getError());
             }
         }
 
-        public void append(String serverFileName, String localFilePath) throws IOException {
+        public void append(String serverFileName, String localFilePath) throws IOException, NoSuchAlgorithmException {
 
             File file = new File(localFilePath);
             long totalBytes = file.length();
 
             Request request = new Request("append",serverFileName,totalBytes);
             sendRequest(request);
+
+            // Checksum
+            MessageDigest checkSum = MessageDigest.getInstance("SHA-256");
 
             //Send the file data over
             try (FileInputStream fis = new FileInputStream(localFilePath)){
@@ -114,11 +154,21 @@ public class Client {
 
                 while(bytesRead != totalBytes){
                     long bytesReadInThisIteration = fis.read(buffer);
+                    checkSum.update(buffer, 0, (int) bytesReadInThisIteration);
                     out.write(buffer, 0, (int)bytesReadInThisIteration);
                     out.flush();
                     bytesRead += bytesReadInThisIteration;
                 }
             }
+
+            // CheckSum
+            byte[] checkSumCode = checkSum.digest();
+
+            out.writeLong(checkSumCode.length);
+            out.flush();
+
+            out.write(checkSumCode);
+            out.flush();
 
             Response response = null;
             try {
@@ -145,20 +195,16 @@ public class Client {
             socket.close();
         }
 
-        public static void main(String[] args) throws IOException, InterruptedException {
-            Client client = new Client("localhost", 50900);
+        public static void main(String[] args) throws IOException, InterruptedException, NoSuchAlgorithmException {
+            Client client = new Client("pie.lynchburg.edu", 50900);
             Scanner scan = new Scanner(System.in);
             PrintStream out = new PrintStream(System.out);
 
-            client.add("bunny.jpg","C:\\Users\\powellj387\\Downloads\\alice.txt");
+            client.add("bunnyFetched.jpg","C:\\Users\\jacks\\Downloads\\bunny.jpg");
+            client.add("alice.txt","C:\\Users\\jacks\\Downloads\\alice.txt");
 
-            //Thread.sleep(10000);
+            client.append("alice.txt", "C:\\Users\\jacks\\Downloads\\alice.txt");
 
-            //client.quit();
-            //client.add("alice.txt", "C:\\Users\\powellj387\\Downloads\\alice.txt");
-           // client.append("alice.txt", "C:\\Users\\jacks\\Downloads\\alice (1).txt");
-
-            //client.fetch("alice.txt","C:\\Users\\jacks\\Downloads\\aliceFetched.txt");
-            //client.fetch( "bunny.jpg","C:\\Users\\jacks\\Downloads\\bunnyFetched.jpg");*/
+            client.fetch("alice.txt","C:\\Users\\jacks\\Downloads\\aliceFetched.txt");
         }
     }
